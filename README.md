@@ -1,178 +1,187 @@
-# Personal Finance Visualizer
+# Finance Visualizer
 
-A comprehensive personal finance tracking application built with Next.js, React, shadcn/ui, Recharts, and MongoDB.
+A modern, responsive finance tracking application built with Next.js, TypeScript, and MongoDB.
 
 ## Features
 
-###  Basic Transaction Tracking
-- ✅ Add, edit, and delete transactions
-- ✅ Display transactions in a responsive list
-- ✅ Monthly expenses visualization with bar charts
-- ✅ Form validation and error handling
+- 📊 **Real-time Dashboard** - Live financial overview with charts and insights
+- 💰 **Transaction Management** - Add, edit, and delete income/expense transactions
+- 📈 **Budget Tracking** - Set and monitor category-based budgets
+- 📱 **Mobile Responsive** - Works perfectly on all devices
+- 🌙 **Dark Theme** - Beautiful dark mode with theme toggle
+- ⚡ **Live Updates** - Real-time data synchronization across tabs
+- 🔄 **Lazy Loading** - Efficient transaction loading with pagination
+- 💾 **Tab Persistence** - Remembers your last viewed tab
 
-### Categories & Dashboard
-- ✅ Predefined expense categories
-- ✅ Category-wise pie chart visualization
-- ✅ Comprehensive dashboard with:
-  - Total income/expenses summary
-  - Category breakdown
-  - Recent transactions
-  - Monthly trends
-
-### Budgeting & Insights
-- ✅ Monthly budget setting per category
-- ✅ Budget vs actual comparison
-- ✅ Budget alerts and notifications
-- ✅ AI-powered spending insights
-- ✅ Personalized recommendations
-
-## Technology Stack
+## Tech Stack
 
 - **Frontend**: Next.js 14, React, TypeScript
-- **UI Components**: shadcn/ui, Tailwind CSS
-- **Charts**: Recharts with shadcn chart components
+- **Styling**: Tailwind CSS, shadcn/ui components
 - **Database**: MongoDB
-- **Styling**: Tailwind CSS with responsive design
+- **Charts**: Recharts
+- **Icons**: Lucide React
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
 
 - Node.js 18+ 
-- MongoDB (local or MongoDB Atlas)
+- pnpm (recommended) or npm
+- MongoDB database
 
-### Installation
+### Local Development
 
-1. Clone the repository
-2. Install dependencies:
-   \`\`\`bash
-   npm install
-   \`\`\`
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd finance-visualizer
+   ```
 
-3. Set up environment variables:
-   \`\`\`bash
-   cp .env.example .env.local
-   \`\`\`
-   
-   Update `.env.local` with your MongoDB connection string:
-   \`\`\`
-   MONGODB_URI=mongodb://localhost:27017/finance_tracker
-   \`\`\`
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
 
-4. Run the development server:
-   \`\`\`bash
-   npm run dev
-   \`\`\`
+3. **Set up environment variables**
+   Create a `.env.local` file:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+4. **Run the development server**
+   ```bash
+   pnpm dev
+   ```
 
-## Project Structure
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-\`\`\`
-├── app/
-│   ├── api/                 # API routes
-│   │   ├── transactions/    # Transaction CRUD operations
-│   │   ├── analytics/       # Analytics data
-│   │   └── budgets/         # Budget management
-│   └── page.tsx            # Main application page
-├── components/
-│   ├── ui/                 # shadcn/ui components
-│   ├── charts/             # Chart components
-│   ├── dashboard.tsx       # Main dashboard
-│   ├── transaction-form.tsx # Transaction form
-│   ├── transaction-list.tsx # Transaction list
-│   ├── budget-manager.tsx  # Budget management
-│   └── insights.tsx        # Financial insights
-├── lib/
-│   ├── mongodb.ts          # Database connection
-│   ├── db-operations.ts    # Database operations
-│   └── types.ts            # TypeScript types
-\`\`\`
+## Deployment Options
 
-## Features Overview
+### Option 1: Vercel + MongoDB Atlas (Recommended)
 
-### Transaction Management
-- Add income and expense transactions
-- Edit existing transactions
-- Delete transactions with confirmation
-- Categorize transactions
-- Date-based organization
+#### Step 1: Set up MongoDB Atlas
+1. Go to [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create a free account
+3. Create a new cluster (M0 Free tier)
+4. Set up database access (create a user)
+5. Set up network access (allow all IPs: 0.0.0.0/0)
+6. Get your connection string
 
-### Visualizations
-- Monthly income vs expenses bar chart
-- Category-wise spending pie chart
-- Budget progress indicators
-- Trend analysis
+#### Step 2: Deploy to Vercel
+1. Push your code to GitHub
+2. Go to [Vercel](https://vercel.com)
+3. Import your repository
+4. Add environment variable:
+   - Name: `MONGODB_URI`
+   - Value: Your MongoDB Atlas connection string
+5. Deploy!
 
-### Budget Management
-- Set monthly budgets per category
-- Track budget vs actual spending
-- Visual progress indicators
-- Budget alerts and warnings
+### Option 2: Railway + MongoDB Atlas
 
-### Insights & Analytics
-- Spending trend analysis
-- Top spending categories
-- Average transaction calculations
-- Personalized recommendations
-- Budget performance alerts
+#### Step 1: Set up Railway
+1. Go to [Railway](https://railway.app)
+2. Connect your GitHub repository
+3. Add environment variable: `MONGODB_URI`
+4. Deploy!
+
+### Option 3: Netlify + MongoDB Atlas
+
+#### Step 1: Set up Netlify
+1. Go to [Netlify](https://netlify.com)
+2. Connect your GitHub repository
+3. Add environment variable: `MONGODB_URI`
+4. Deploy!
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `MONGODB_URI` | MongoDB connection string | Yes |
 
 ## Database Schema
 
 ### Transactions Collection
-\`\`\`javascript
+```typescript
 {
   _id: ObjectId,
-  amount: Number,
-  description: String,
-  category: String,
-  date: String,
-  type: 'income' | 'expense',
+  amount: number,
+  description: string,
+  category: string,
+  date: string,
+  type: "income" | "expense",
   createdAt: Date,
   updatedAt: Date
 }
-\`\`\`
+```
 
 ### Budgets Collection
-\`\`\`javascript
+```typescript
 {
   _id: ObjectId,
-  category: String,
-  amount: Number,
-  month: String, // YYYY-MM format
+  category: string,
+  amount: number,
+  month: string, // YYYY-MM format
   createdAt: Date,
   updatedAt: Date
 }
-\`\`\`
+```
 
 ## API Endpoints
 
-- `GET /api/transactions` - Fetch transactions
-- `POST /api/transactions` - Create transaction
+- `GET /api/transactions` - Get transactions with pagination
+- `POST /api/transactions` - Create new transaction
 - `PUT /api/transactions/[id]` - Update transaction
 - `DELETE /api/transactions/[id]` - Delete transaction
-- `GET /api/analytics` - Get analytics data
-- `GET /api/budgets` - Fetch budgets
-- `POST /api/budgets` - Set/update budget
+- `GET /api/analytics` - Get dashboard analytics
+- `GET /api/budgets` - Get budgets for a month
+- `POST /api/budgets` - Create/update budget
 
-## Responsive Design
+## Features in Detail
 
-The application is fully responsive and works seamlessly across:
-- Desktop (1024px+)
-- Tablet (768px - 1023px)
-- Mobile (320px - 767px)
+### Real-time Updates
+- Automatic data refresh every 5 seconds
+- Cross-tab synchronization
+- Live updates when data changes
+
+### Mobile Responsive
+- Optimized for all screen sizes
+- Touch-friendly interface
+- Responsive charts and layouts
+
+### Dark Theme
+- System theme detection
+- Manual theme toggle
+- Persistent theme preference
+
+### Lazy Loading
+- 10 transactions per page
+- Load more functionality
+- Efficient data loading
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+4. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License - see LICENSE file for details
 
+## Support
 
-Built with ❤️ by Mihir Patel
+If you encounter any issues:
+1. Check the [Issues](https://github.com/your-repo/issues) page
+2. Create a new issue with detailed information
+3. Include your environment and steps to reproduce
+
+## Roadmap
+
+- [ ] Export data to CSV/PDF
+- [ ] Multi-currency support
+- [ ] Recurring transactions
+- [ ] Financial goals tracking
+- [ ] Advanced analytics
+- [ ] Mobile app
