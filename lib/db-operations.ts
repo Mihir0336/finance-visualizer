@@ -5,31 +5,36 @@ import type { Transaction, Budget, CategorySummary, MonthlyData } from "./types"
 const DB_NAME = "finance_tracker"
 
 export async function getTransactions(limit?: number, skip?: number): Promise<Transaction[]> {
-  const client = await clientPromise
-  const db = client.db(DB_NAME)
+  try {
+    const client = await clientPromise
+    const db = client.db(DB_NAME)
 
-  const query = db.collection("transactions").find({}).sort({ date: -1 })
+    const query = db.collection("transactions").find({}).sort({ date: -1 })
 
-  if (skip) {
-    query.skip(skip)
+    if (skip) {
+      query.skip(skip)
+    }
+
+    if (limit) {
+      query.limit(limit)
+    }
+
+    const transactions = await query.toArray()
+
+    return transactions.map((t: any) => ({
+      _id: t._id.toString(),
+      amount: t.amount,
+      description: t.description,
+      category: t.category,
+      date: t.date,
+      type: t.type,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+    }))
+  } catch (error) {
+    console.error("Error fetching transactions:", error)
+    return []
   }
-
-  if (limit) {
-    query.limit(limit)
-  }
-
-  const transactions = await query.toArray()
-
-  return transactions.map((t: any) => ({
-    _id: t._id.toString(),
-    amount: t.amount,
-    description: t.description,
-    category: t.category,
-    date: t.date,
-    type: t.type,
-    createdAt: t.createdAt,
-    updatedAt: t.updatedAt,
-  }))
 }
 
 export async function createTransaction(transaction: Omit<Transaction, "_id">): Promise<Transaction> {
@@ -71,71 +76,81 @@ export async function deleteTransaction(id: string): Promise<void> {
 }
 
 export async function getMonthlyExpenses(): Promise<MonthlyData[]> {
-  const client = await clientPromise
-  const db = client.db(DB_NAME)
+  try {
+    const client = await clientPromise
+    const db = client.db(DB_NAME)
 
-  const pipeline = [
-    {
-      $group: {
-        _id: {
-          month: { $dateToString: { format: "%Y-%m", date: { $dateFromString: { dateString: "$date" } } } },
-          type: "$type",
+    const pipeline = [
+      {
+        $group: {
+          _id: {
+            month: { $dateToString: { format: "%Y-%m", date: { $dateFromString: { dateString: "$date" } } } },
+            type: "$type",
+          },
+          total: { $sum: "$amount" },
         },
-        total: { $sum: "$amount" },
       },
-    },
-    {
-      $group: {
-        _id: "$_id.month",
-        data: {
-          $push: {
-            type: "$_id.type",
-            amount: "$total",
+      {
+        $group: {
+          _id: "$_id.month",
+          data: {
+            $push: {
+              type: "$_id.type",
+              amount: "$total",
+            },
           },
         },
       },
-    },
-    { $sort: { _id: 1 } },
-  ]
+      { $sort: { _id: 1 } },
+    ]
 
-  const result = await db.collection("transactions").aggregate(pipeline).toArray()
+    const result = await db.collection("transactions").aggregate(pipeline).toArray()
 
-  return result.map((item) => {
-    const income = item.data.find((d: any) => d.type === "income")?.amount || 0
-    const expenses = item.data.find((d: any) => d.type === "expense")?.amount || 0
+    return result.map((item) => {
+      const income = item.data.find((d: any) => d.type === "income")?.amount || 0
+      const expenses = item.data.find((d: any) => d.type === "expense")?.amount || 0
 
-    return {
-      month: item._id,
-      income,
-      expenses,
-      net: income - expenses,
-    }
-  })
+      return {
+        month: item._id,
+        income,
+        expenses,
+        net: income - expenses,
+      }
+    })
+  } catch (error) {
+    console.error("Error fetching monthly expenses:", error)
+    return []
+  }
 }
 
 export async function getCategorySummary(): Promise<CategorySummary[]> {
-  const client = await clientPromise
-  const db = client.db(DB_NAME)
+  try {
+    const client = await clientPromise
+    const db = client.db(DB_NAME)
 
-  const pipeline = [
-    { $match: { type: "expense" } },
-    {
-      $group: {
-        _id: "$category",
-        amount: { $sum: "$amount" },
-        count: { $sum: 1 },
+    const pipeline = [
+      { $match: { type: "expense" } },
+      {
+        $group: {
+          _id: "$category",
+          amount: { $sum: "$amount" },
+          count: { $sum: 1 },
+        },
       },
-    },
-    { $sort: { amount: -1 } },
-  ]
+      { $sort: { amount: -1 } },
+    ]
 
-  const result = await db.collection("transactions").aggregate(pipeline).toArray()
+    const result = await db.collection("transactions").aggregate(pipeline).toArray()
 
-  return result.map((item) => ({
-    category: item._id,
-    amount: item.amount,
-    count: item.count,
-  }))
+    return result.map((item) => ({
+      category: item._id,
+      amount: item.amount,
+      count: item.count,
+    }))
+  } catch (error) {
+    console.error("Error fetching category summary:", error)
+    return []
+  }
 }
 
 export async function getBudgets(month: string): Promise<Budget[]> {
