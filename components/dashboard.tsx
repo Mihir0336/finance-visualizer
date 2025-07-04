@@ -33,7 +33,9 @@ export function Dashboard({ onDataUpdate }: DashboardProps) {
 
       if (transactionsResponse.ok) {
         const transactions = await transactionsResponse.json()
-        setRecentTransactions(transactions)
+        // Handle the new API response format with pagination
+        const transactionList = transactions.transactions || transactions
+        setRecentTransactions(Array.isArray(transactionList) ? transactionList : [])
       }
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error)

@@ -4,11 +4,15 @@ import type { Transaction, Budget, CategorySummary, MonthlyData } from "./types"
 
 const DB_NAME = "finance_tracker"
 
-export async function getTransactions(limit?: number): Promise<Transaction[]> {
+export async function getTransactions(limit?: number, skip?: number): Promise<Transaction[]> {
   const client = await clientPromise
   const db = client.db(DB_NAME)
 
   const query = db.collection("transactions").find({}).sort({ date: -1 })
+
+  if (skip) {
+    query.skip(skip)
+  }
 
   if (limit) {
     query.limit(limit)
@@ -16,9 +20,15 @@ export async function getTransactions(limit?: number): Promise<Transaction[]> {
 
   const transactions = await query.toArray()
 
-  return transactions.map((t) => ({
-    ...t,
+  return transactions.map((t: any) => ({
     _id: t._id.toString(),
+    amount: t.amount,
+    description: t.description,
+    category: t.category,
+    date: t.date,
+    type: t.type,
+    createdAt: t.createdAt,
+    updatedAt: t.updatedAt,
   }))
 }
 
@@ -134,9 +144,13 @@ export async function getBudgets(month: string): Promise<Budget[]> {
 
   const budgets = await db.collection("budgets").find({ month }).toArray()
 
-  return budgets.map((b) => ({
-    ...b,
+  return budgets.map((b: any) => ({
     _id: b._id.toString(),
+    category: b.category,
+    amount: b.amount,
+    month: b.month,
+    createdAt: b.createdAt,
+    updatedAt: b.updatedAt,
   }))
 }
 
@@ -156,8 +170,16 @@ export async function setBudget(budget: Omit<Budget, "_id">): Promise<Budget> {
     { upsert: true, returnDocument: "after" },
   )
 
+  if (!result || !result.value) {
+    throw new Error("Failed to create or update budget")
+  }
+
   return {
-    ...result.value,
     _id: result.value._id.toString(),
+    category: result.value.category,
+    amount: result.value.amount,
+    month: result.value.month,
+    createdAt: result.value.createdAt,
+    updatedAt: result.value.updatedAt,
   }
 }
