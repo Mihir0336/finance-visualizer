@@ -12,8 +12,14 @@ import type { MonthlyData, CategorySummary } from "@/lib/types"
 export default function Home() {
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([])
   const [categoryData, setCategoryData] = useState<CategorySummary[]>([])
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [activeTab, setActiveTab] = useState<string>("dashboard")
+  const [mounted, setMounted] = useState(false)
+
+  // Set mounted to true after hydration
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Load active tab from localStorage on mount
   useEffect(() => {
@@ -74,9 +80,11 @@ export default function Home() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">Finance Tracker</h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            Last updated: {lastUpdate.toLocaleTimeString()}
-          </p>
+          {mounted && lastUpdate && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Last updated: {lastUpdate.toLocaleTimeString()}
+            </p>
+          )}
         </div>
         <ThemeToggle />
       </div>
