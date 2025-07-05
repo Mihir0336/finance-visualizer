@@ -7,8 +7,18 @@ if (uri && !uri.includes('retryWrites=true')) {
   uri += (uri.includes('?') ? '&' : '?') + 'retryWrites=true&w=majority'
 }
 
-// MongoDB connection options with proper SSL configuration
-const options = {
+// MongoDB connection options - different for local vs remote
+const isLocalMongo = uri?.includes('localhost') || uri?.includes('127.0.0.1')
+
+const options = isLocalMongo ? {
+  // Local MongoDB options (no SSL)
+  retryWrites: true,
+  w: 'majority' as const,
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+} : {
+  // Remote MongoDB options (with SSL)
   ssl: true,
   tls: true,
   tlsAllowInvalidCertificates: false,
