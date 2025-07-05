@@ -181,63 +181,63 @@ export function TransactionList({ onDataUpdate }: TransactionListProps) {
         <>
           <div className="space-y-3 sm:space-y-4">
             {displayedTransactions.map((transaction) => (
-              <Card key={transaction._id}>
+            <Card key={transaction._id}>
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
                         <Badge variant={transaction.type === "income" ? "default" : "secondary"} className="w-fit text-xs">
-                          {transaction.type}
-                        </Badge>
+                        {transaction.type}
+                      </Badge>
                         <Badge variant="outline" className="w-fit text-xs">{transaction.category}</Badge>
                       </div>
                       <h3 className="font-semibold text-sm sm:text-base truncate">{transaction.description}</h3>
                       <p className="text-xs sm:text-sm text-muted-foreground">{formatDate(transaction.date)}</p>
                     </div>
                     <div className="flex items-center justify-between sm:justify-end gap-2">
-                      <span
+                    <span
                         className={`text-base sm:text-lg font-bold ${
-                          transaction.type === "income" ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {transaction.type === "income" ? "+" : "-"}
-                        {formatCurrency(transaction.amount)}
-                      </span>
-                      <div className="flex gap-1">
+                        transaction.type === "income" ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {transaction.type === "income" ? "+" : "-"}
+                      {formatCurrency(transaction.amount)}
+                    </span>
+                    <div className="flex gap-1">
                         <Button size="sm" variant="outline" onClick={() => setEditingTransaction(transaction)} className="h-8 w-8 p-0">
                           <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
                             <Button size="sm" variant="outline" className="h-8 w-8 p-0">
                               <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete this transaction? This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDelete(transaction._id!)}
-                                className="bg-red-600 hover:bg-red-700"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this transaction? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(transaction._id!)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
           {hasMore && (
             <div className="text-center pt-4">

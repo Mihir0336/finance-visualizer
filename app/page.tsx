@@ -36,17 +36,17 @@ export default function Home() {
   }
 
   const fetchAnalytics = useCallback(async () => {
-    try {
-      const response = await fetch("/api/analytics")
-      if (response.ok) {
-        const data = await response.json()
-        setMonthlyData(data.monthlyData)
-        setCategoryData(data.categoryData)
+      try {
+        const response = await fetch("/api/analytics")
+        if (response.ok) {
+          const data = await response.json()
+          setMonthlyData(data.monthlyData)
+          setCategoryData(data.categoryData)
         setLastUpdate(new Date())
+        }
+      } catch (error) {
+        console.error("Failed to fetch analytics:", error)
       }
-    } catch (error) {
-      console.error("Failed to fetch analytics:", error)
-    }
   }, [])
 
   // Initial fetch

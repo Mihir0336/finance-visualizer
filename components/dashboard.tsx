@@ -18,31 +18,31 @@ export function Dashboard({ onDataUpdate }: DashboardProps) {
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchData = async () => {
-    try {
-      const [analyticsResponse, transactionsResponse] = await Promise.all([
-        fetch("/api/analytics"),
-        fetch("/api/transactions?limit=5"),
-      ])
+    const fetchData = async () => {
+      try {
+        const [analyticsResponse, transactionsResponse] = await Promise.all([
+          fetch("/api/analytics"),
+          fetch("/api/transactions?limit=5"),
+        ])
 
-      if (analyticsResponse.ok) {
-        const analytics = await analyticsResponse.json()
-        setMonthlyData(analytics.monthlyData)
-        setCategoryData(analytics.categoryData)
-      }
+        if (analyticsResponse.ok) {
+          const analytics = await analyticsResponse.json()
+          setMonthlyData(analytics.monthlyData)
+          setCategoryData(analytics.categoryData)
+        }
 
-      if (transactionsResponse.ok) {
-        const transactions = await transactionsResponse.json()
+        if (transactionsResponse.ok) {
+          const transactions = await transactionsResponse.json()
         // Handle the new API response format with pagination
         const transactionList = transactions.transactions || transactions
         setRecentTransactions(Array.isArray(transactionList) ? transactionList : [])
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error("Failed to fetch dashboard data:", error)
-    } finally {
-      setLoading(false)
     }
-  }
 
   useEffect(() => {
     fetchData()

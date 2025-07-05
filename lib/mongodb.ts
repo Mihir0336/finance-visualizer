@@ -7,12 +7,14 @@ if (uri && !uri.includes('retryWrites=true')) {
   uri += (uri.includes('?') ? '&' : '?') + 'retryWrites=true&w=majority'
 }
 
-// MongoDB connection options with proper SSL configuration
+// MongoDB connection options - disable SSL for local connections
+const isLocalConnection = uri?.includes('localhost') || uri?.includes('127.0.0.1')
+
 const options = {
-  ssl: true,
-  tls: true,
-  tlsAllowInvalidCertificates: false,
-  tlsAllowInvalidHostnames: false,
+  ssl: !isLocalConnection,
+  tls: !isLocalConnection,
+  tlsAllowInvalidCertificates: !isLocalConnection,
+  tlsAllowInvalidHostnames: !isLocalConnection,
   retryWrites: true,
   w: 'majority' as const,
   maxPoolSize: 10,
